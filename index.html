@@ -1,0 +1,657 @@
+<!DOCTYPE html><html><head><meta name="x-poe-datastore-behavior" content="local_only"><meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com; frame-src 'self' https://www.youtube.com https://trytako.com; child-src 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests; block-all-mixed-content;"><meta http-equiv="x-dns-prefetch-control" content="off"><script src="https://puc.poecdn.net/authenticated_preview_page/standard.3ef2c256959faf5a756d.js"></script>
+    <meta charset="utf-8">
+    <title>Poe</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+  <script src="https://puc.poecdn.net/authenticated_preview_page/disableWebRTC.9710cebe07429a9e8e06.js"></script><meta name="x-poe-allow-downloads" content="true"><meta name="x-poe-datastore-behavior" content="disabled"><script src="https://puc.poecdn.net/authenticated_preview_page/tw.50ec1b0612bf5b0c30a5.js"></script><script src="https://puc.poecdn.net/authenticated_preview_page/deps.faccd16000d314dc16d5.js"></script><script src="https://puc.poecdn.net/authenticated_preview_page/exports.b0f0f482cdeb5302b0b9.js"></script><script src="https://puc.poecdn.net/authenticated_preview_page/renderer.75c73ae6b4235f62945a.js"></script><script>Object.defineProperty(exports, "__esModule", {value: true}); function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; } function _optionalChain(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }var _react = require('react'); var _react2 = _interopRequireDefault(_react);
+var _framermotion = require('framer-motion');
+
+// ===== UTILS =====
+const R = (a,b) => Math.floor(Math.random()*(b-a+1))+a;
+const shuf = a => {const b=[...a];for(let i=b.length-1;i>0;i--){const j=R(0,i);[b[i],b[j]]=[b[j],b[i]];}return b;};
+const pick = (a,n) => shuf(a).slice(0,Math.min(n,a.length));
+const mk = (t,c,w) => {const o=shuf([c,...w]);return{text:t,options:o,answer:o.indexOf(c)};};
+
+// ===== QUESTION BANKS =====
+const QE = [
+  [()=>mk("🍽️\nQuel objet ?","Assiette",["Chaise","Balai","Arrosoir"]),()=>mk("🔪\nQuel objet ?","Couteau",["Fourchette","Cuillère","Serviette"]),()=>mk("🥄\nQuel objet ?","Cuillère",["Couteau","Fourchette","Verre"]),()=>mk("🍷\nQuel objet ?","Verre",["Assiette","Carafe","Bol"]),()=>mk("🧹\nQuel objet ?","Balai",["Couteau","Tondeuse","Arrosoir"]),()=>mk("🧽\nQuel objet ?","Éponge",["Serviette","Nappe","Torchon"]),()=>mk("🍳\nQuel objet ?","Poêle",["Casserole","Assiette","Verre"]),()=>mk("🌳\nC'est quoi ?","Arbre",["Table","Éponge","Casserole"]),()=>mk("🌻\nC'est quoi ?","Fleur",["Légume","Herbe","Feuille"]),()=>mk("🍃\nC'est quoi ?","Feuille",["Branche","Graine","Fleur"]),()=>mk("🌱\nC'est quoi ?","Graine",["Arbre","Branche","Herbe"]),()=>mk("🥕\nC'est quoi ?","Carotte",["Tomate","Salade","Poireau"]),()=>mk("🍅\nC'est quoi ?","Tomate",["Fraise","Cerise","Pomme"]),()=>mk("🧤\nQuel objet ?","Gants",["Chaussures","Chapeau","Tablier"])],
+  [()=>mk("Je mets la ___\nsur la table.","nappe",["pelle","graine","branche"]),()=>mk("Je lave les ___\naprès le repas.","assiettes",["fleurs","arbres","graines"]),()=>mk("Le client commande\nun ___.","dessert",["sécateur","arrosoir","râteau"]),()=>mk("Je passe le ___\nsur le sol.","balai",["couteau","plat","verre"]),()=>mk("Je ___ les fleurs\navec l'arrosoir.","arrose",["coupe","lave","cuis"]),()=>mk("Je tonds la ___\navec la tondeuse.","pelouse",["table","cuisine","nappe"]),()=>mk("Je ramasse les\n___ mortes.","feuilles",["assiettes","serviettes","verres"]),()=>mk("Je plante des ___\nau printemps.","graines",["couteaux","verres","nappes"]),()=>mk("Je sers le ___\nau client.","plat",["jardin","arbre","sécateur"]),()=>mk("Je ___ la table\navant le service.","dresse",["plante","tonds","arrose"]),()=>mk("Je ___ les légumes\navant de cuire.","épluche",["plante","arrose","tonds"]),()=>mk("On ___ la haie\nau printemps.","taille",["arrose","plante","sert"])],
+  [()=>mk("« Mettre le couvert »\nça veut dire :","Poser assiettes\ncouverts verres",["Nettoyer la cuisine","Faire la vaisselle","Balayer la salle"]),()=>mk("« Débarrasser »\nça veut dire :","Enlever assiettes\net verres",["Mettre la nappe","Apporter le menu","Installer les chaises"]),()=>mk("« Désherber »\nça veut dire :","Enlever les\nmauvaises herbes",["Planter des fleurs","Arroser les plantes","Tondre la pelouse"]),()=>mk("« Tailler la haie »\nça veut dire :","Couper les branches\nde la haie",["Arroser la haie","Planter une haie","Ramasser les feuilles"]),()=>mk("« Dresser l'assiette »\nça veut dire :","Disposer les aliments\njoliment",["Laver l'assiette","Casser l'assiette","Ranger l'assiette"]),()=>mk("« Ratisser l'allée »\nça veut dire :","Nettoyer avec\nun râteau",["Arroser le chemin","Creuser l'allée","Planter sur l'allée"]),()=>mk("« Éplucher »\nça veut dire :","Enlever la peau\ndes légumes",["Cuire les légumes","Couper les légumes","Planter des légumes"]),()=>mk("« Napper le gâteau »\nça veut dire :","Mettre crème\nou sauce dessus",["Couper le gâteau","Manger le gâteau","Ranger le gâteau"]),()=>mk("« Biner le potager »\nça veut dire :","Retourner la terre\nen surface",["Arroser le potager","Récolter les légumes","Planter des graines"]),()=>mk("« Faire le tri »\nça veut dire :","Séparer les déchets\npar type",["Jeter tout ensemble","Nettoyer poubelles","Laver le sol"])]
+];
+
+const genC = (d) => {
+  const t=R(0,4);
+  if(t===0){const a=d===0?R(2,15):d===1?R(10,40):R(20,80),b=d===0?R(2,10):d===1?R(5,25):R(10,50),r=a+b;return mk(shuf([`${a} + ${b} = ?`,`${a} couverts\n+ ${b} couverts\n\nTotal ?`,`${a} plants le matin\n+ ${b} l'après-midi\n\nEn tout ?`,`${a} serviettes\n+ ${b} serviettes\n\nCombien ?`])[0],String(r),[String(r+1),String(r-1),String(r+2)]);}
+  if(t===1){const b=d===0?R(2,8):d===1?R(5,15):R(10,30),a=b+(d===0?R(3,12):d===1?R(5,25):R(10,40)),r=a-b;return mk(shuf([`${a} - ${b} = ?`,`${a} assiettes\n${b} cassées\n\nIl reste ?`,`${a} fleurs\nJ'en coupe ${b}\n\nIl reste ?`,`${a} feuilles\nJ'en ramasse ${b}\n\nIl reste ?`])[0],String(r),[String(r+1),String(r-1),String(r+2)]);}
+  if(t===2){const a=d===0?R(2,5):d===1?R(3,7):R(4,9),b=d===0?R(2,4):d===1?R(3,6):R(5,8),r=a*b;return mk(shuf([`${a} × ${b} = ?`,`${a} tables\n${b} verres chacune\n\nTotal ?`,`${a} rangées\nde ${b} plants\n\nCombien ?`])[0],String(r),[String(r+1),String(r-1),String(r+a)]);}
+  if(t===3){const b=d===0?R(2,4):d===1?R(2,5):R(3,6),r=d===0?R(2,5):d===1?R(3,8):R(4,10),a=b*r;return mk(shuf([`${a} ÷ ${b} = ?`,`${a} parts\npour ${b} personnes\n\nChacun ?`,`${a} plants\ndans ${b} rangées\n\nPar rangée ?`])[0],String(r),[String(r+1),String(r-1),String(r+2)]);}
+  const p=d===0?R(3,10):d===1?R(5,20):R(8,30),g=p+(d===0?R(1,5):d===1?R(2,10):R(5,20)),r=g-p;return mk(shuf([`Repas : ${p} €\nDonné : ${g} €\n\nMonnaie ?`,`Graines : ${p} €\nPayé : ${g} €\n\nRendu ?`,`Dessert : ${p} €\nBillet : ${g} €\n\nRendu ?`])[0],`${r} €`,[`${r+1} €`,`${r-1} €`,`${r+2} €`]);
+};
+
+const QM = [
+  [()=>mk("Pour peser la farine :","Le gramme",["Le litre","Le mètre","Le cm"]),()=>mk("Pour mesurer l'eau :","Le litre",["Le mètre","Le kilo","Le cm"]),()=>mk("Pour un massif :","Le mètre",["Le litre","Le gramme","Le degré"]),()=>mk("Hauteur d'une plante :","Le centimètre",["Le gramme","Le litre","Le kilo"]),()=>mk("Eau de l'arrosoir :","Le litre",["Le mètre","Le gramme","Le cm"]),()=>mk("Peser la viande :","Le kilogramme",["Le litre","Le cm","Le mètre"]),()=>mk("Lait dans un verre :","Le centilitre",["Le kilo","Le cm","Le mètre"]),()=>mk("Peser du terreau :","Le kilogramme",["Le litre","Le mètre","Le cm"]),()=>mk("Température du four :","Le degré",["Le gramme","Le litre","Le mètre"]),()=>mk("Longueur d'un tuyau :","Le mètre",["Le litre","Le gramme","Le degré"])],
+  [()=>mk("Le plus lourd ?","1 kg",["500 g","200 g","100 g"]),()=>mk("Le plus long ?","1 mètre",["50 cm","30 cm","10 cm"]),()=>mk("Plus de liquide ?","1 litre",["50 cL","25 cL","10 cL"]),()=>mk("Le plus lourd ?","2 kg",["500 g","1 kg","200 g"]),()=>mk("Le plus court ?","10 cm",["50 cm","1 mètre","30 cm"]),()=>mk("Le plus léger ?","100 g",["500 g","1 kg","2 kg"]),()=>mk("Le plus chaud ?","200°C",["100°C","50°C","150°C"]),()=>mk("Le plus grand ?","2 mètres",["150 cm","1 mètre","50 cm"]),()=>mk("Le moins rempli ?","10 cL",["1 litre","50 cL","25 cL"]),()=>mk("Le plus lourd ?","5 kg",["2 kg","1 kg","500 g"])],
+  [()=>mk("1 kg = ?","1000 g",["100 g","500 g","10 g"]),()=>mk("1 litre = ?","100 cL",["10 cL","50 cL","1000 cL"]),()=>mk("1 mètre = ?","100 cm",["10 cm","50 cm","1000 cm"]),()=>mk("500 g = ?","0,5 kg",["5 kg","50 kg","0,05 kg"]),()=>mk("50 cL = ?","0,5 litre",["5 litres","0,05 litre","50 litres"]),()=>mk("250 g c'est :","1/4 de kilo",["1/2 kilo","1 kilo","2 kilos"]),()=>mk("Un demi-litre :","50 cL",["10 cL","25 cL","100 cL"]),()=>mk("1,5 litre :","150 cL",["15 cL","50 cL","100 cL"]),()=>mk("750 g c'est :","3/4 de kilo",["1/2 kilo","1 kilo","1/4 de kilo"]),()=>mk("200 cm c'est :","2 mètres",["20 mètres","0,2 mètre","200 mètres"])]
+];
+
+const getQs = (w,l,n=6) => {if(w==='calcul')return Array.from({length:n},()=>genC(l));const p=w==='ecrits'?QE[l]:QM[l];return pick(p,n).map(f=>f());};
+const getMix = (n=8) => {const q=[];while(q.length<n){const t=R(0,2);if(t===0)q.push(pick(QE[R(0,2)],1)[0]());else if(t===1)q.push(genC(R(0,1)));else q.push(pick(QM[R(0,2)],1)[0]());}return shuf(q).slice(0,n);};
+
+// ===== CONSTANTS =====
+const XLVL=[{m:0,n:'Débutant',e:'🌱'},{m:80,n:'Apprenti',e:'📗'},{m:200,n:'Confirmé',e:'📘'},{m:400,n:'Expert',e:'📕'},{m:700,n:'Maître',e:'👑'}];
+const TRO=[
+  {id:'first',n:'Premier Pas',e:'👣',d:'Finir un exercice'},{id:'perf',n:'Sans Faute',e:'💎',d:'Score parfait'},
+  {id:'s5',n:'En Feu',e:'🔥',d:'5 bonnes de suite'},{id:'s10',n:'Inarrêtable',e:'⚡',d:'10 bonnes de suite'},
+  {id:'we',n:'Lecteur',e:'📖',d:'Finir monde Écrits'},{id:'wc',n:'Calculateur',e:'🔢',d:'Finir monde Calcul'},
+  {id:'wm',n:'Mesureur',e:'📏',d:'Finir monde Mesures'},{id:'dy',n:'Défi du Jour',e:'🎯',d:'Défi quotidien'},
+  {id:'sv5',n:'Survivant',e:'💚',d:'5 bonnes en survie'},{id:'sv10',n:'Incassable',e:'🛡️',d:'10 en survie'},
+  {id:'ch',n:'Rapide',e:'⏱️',d:'Finir un chrono'},{id:'du',n:'Duelliste',e:'⚔️',d:'Jouer un duel'},
+  {id:'st1',n:'Collectionneur',e:'⭐',d:'100 étoiles'},{id:'st5',n:'Étoile d\'Or',e:'🌟',d:'500 étoiles'},
+  {id:'xp2',n:'Pro',e:'🎓',d:'200 XP'},{id:'g10',n:'Habitué',e:'📅',d:'10 parties'},
+  {id:'all',n:'Explorateur',e:'🗺️',d:'Tous les mondes'}
+];
+const WLD=[{k:'ecrits',n:'Les Écrits',e:'📖',d:'Lire et comprendre',l:['Vocabulaire','Phrases','Consignes']},{k:'calcul',n:'Le Calcul',e:'🔢',d:'Compter et calculer',l:['Facile','Moyen','Difficile']},{k:'mesures',n:'Les Mesures',e:'📏',d:'Peser et mesurer',l:['Unités','Comparer','Convertir']}];
+const getLvl=x=>{for(let i=XLVL.length-1;i>=0;i--)if(x>=XLVL[i].m)return{...XLVL[i],i};return{...XLVL[0],i:0};};
+const nxtXp=x=>{const l=getLvl(x);return l.i<XLVL.length-1?XLVL[l.i+1].m:null;};
+const wCol={ecrits:{bg:'bg-blue-500',lt:'bg-blue-50',tx:'text-blue-600',bd:'border-blue-300',gr:'from-blue-400 to-blue-600'},calcul:{bg:'bg-emerald-500',lt:'bg-emerald-50',tx:'text-emerald-600',bd:'border-emerald-300',gr:'from-emerald-400 to-emerald-600'},mesures:{bg:'bg-amber-500',lt:'bg-amber-50',tx:'text-amber-600',bd:'border-amber-300',gr:'from-amber-400 to-amber-600'}};
+
+ function MetierQuest(){
+  const[p,setP]=_react.useState.call(void 0, {n:'',xp:0,st:0,sk:0,bsk:0,tr:[],wp:{ecrits:[0,0,0],calcul:[0,0,0],mesures:[0,0,0]},gp:0,pf:0,sb:0,dd:null,tc:0});
+  const[pg,setPg]=_react.useState.call(void 0, 'welcome');
+  const[tab,setTab]=_react.useState.call(void 0, 'home');
+  const[md,setMd]=_react.useState.call(void 0, null);
+  const[gw,setGw]=_react.useState.call(void 0, null);
+  const[gl,setGl]=_react.useState.call(void 0, 0);
+  const[qs,setQs]=_react.useState.call(void 0, []);
+  const[qi,setQi]=_react.useState.call(void 0, 0);
+  const[sel,setSel]=_react.useState.call(void 0, null);
+  const[fb,setFb]=_react.useState.call(void 0, false);
+  const[sc,setSc]=_react.useState.call(void 0, 0);
+  const[gs,setGs]=_react.useState.call(void 0, 0);
+  const[gb,setGb]=_react.useState.call(void 0, 0);
+  const[lv,setLv]=_react.useState.call(void 0, 3);
+  const[tl,setTl]=_react.useState.call(void 0, 15);
+  const[dn1,setDn1]=_react.useState.call(void 0, '');
+  const[dn2,setDn2]=_react.useState.call(void 0, '');
+  const[dpl,setDpl]=_react.useState.call(void 0, 1);
+  const[ds1,setDs1]=_react.useState.call(void 0, 0);
+  const[ds2,setDs2]=_react.useState.call(void 0, 0);
+  const[dq2,setDq2]=_react.useState.call(void 0, []);
+  const[showS,setShowS]=_react.useState.call(void 0, false);
+  const[showL,setShowL]=_react.useState.call(void 0, false);
+  const[sCode,setSCode]=_react.useState.call(void 0, '');
+  const[lCode,setLCode]=_react.useState.call(void 0, '');
+  const[lErr,setLErr]=_react.useState.call(void 0, '');
+  const[cpd,setCpd]=_react.useState.call(void 0, false);
+  const[nwT,setNwT]=_react.useState.call(void 0, null);
+  const[res,setRes]=_react.useState.call(void 0, null);
+
+  // Load
+  _react.useEffect.call(void 0, ()=>{try{const s=localStorage.getItem('mq3');if(s){const d=JSON.parse(s);if(d.n){setP(d);setPg('home');}}}catch(e){}},[]);
+  // Save
+  _react.useEffect.call(void 0, ()=>{if(p.n)try{localStorage.setItem('mq3',JSON.stringify(p));}catch(e){}},[p]);
+  // Timer
+  _react.useEffect.call(void 0, ()=>{
+    let iv;
+    if(md==='chrono'&&pg==='play'&&!fb){
+      iv=setInterval(()=>setTl(t=>{if(t<=1){clearInterval(iv);setFb(true);setGs(0);return 0;}return t-1;}),1000);
+    }
+    return()=>clearInterval(iv);
+  },[md,pg,fb,qi]);
+
+  const lvl=getLvl(p.xp);
+  const nxt=nxtXp(p.xp);
+  const today=new Date().toDateString();
+  const dailyDone=p.dd===today;
+
+  // Trophy check
+  const tryTr=(np,mode,score,total,bestStreak)=>{
+    let add=[];const has=id=>np.tr.includes(id)||add.includes(id);
+    if(!has('first'))add.push('first');
+    if(score===total&&!has('perf'))add.push('perf');
+    if(bestStreak>=5&&!has('s5'))add.push('s5');
+    if(bestStreak>=10&&!has('s10'))add.push('s10');
+    if(mode==='daily'&&!has('dy'))add.push('dy');
+    if(mode==='chrono'&&!has('ch'))add.push('ch');
+    if(mode==='duel'&&!has('du'))add.push('du');
+    if(mode==='survival'&&score>=5&&!has('sv5'))add.push('sv5');
+    if(mode==='survival'&&score>=10&&!has('sv10'))add.push('sv10');
+    if(np.st>=100&&!has('st1'))add.push('st1');
+    if(np.st>=500&&!has('st5'))add.push('st5');
+    if(np.xp>=200&&!has('xp2'))add.push('xp2');
+    if(np.gp>=10&&!has('g10'))add.push('g10');
+    const wk={ecrits:'we',calcul:'wc',mesures:'wm'};
+    for(const w of WLD){const tid=wk[w.k];if(np.wp[w.k].every(s=>s>0)&&!has(tid))add.push(tid);}
+    if(WLD.every(w=>np.wp[w.k].every(s=>s>0))&&!has('all'))add.push('all');
+    return add;
+  };
+
+  const finish=(finalSc,totalQ,bestSk)=>{
+    const isPf=finalSc===totalQ;
+    const stE=finalSc*5+(isPf?25:0)+(md==='daily'?150:0);
+    const xpE=finalSc*10+(isPf?50:0)+(md==='daily'?100:0);
+    setP(prev=>{
+      const np={...prev};
+      np.st+=stE;np.xp+=xpE;np.gp+=1;np.tc+=finalSc;
+      if(isPf)np.pf+=1;
+      if(bestSk>np.bsk)np.bsk=bestSk;
+      if(md==='survival'&&finalSc>np.sb)np.sb=finalSc;
+      if(md==='daily')np.dd=today;
+      if(md==='adventure'&&gw!=null){
+        const wp={...np.wp};wp[gw]=[...wp[gw]];
+        const ls=Math.ceil((finalSc/totalQ)*3);
+        if(ls>wp[gw][gl])wp[gw][gl]=ls;
+        np.wp=wp;
+      }
+      const add=tryTr(np,md,finalSc,totalQ,bestSk);
+      if(add.length>0){np.tr=[...np.tr,...add];const t=TRO.find(x=>x.id===add[0]);if(t)setNwT(t);setTimeout(()=>setNwT(null),3500);}
+      return np;
+    });
+    setRes({sc:finalSc,tot:totalQ,stE,xpE,pf:isPf});
+    setPg('results');
+  };
+
+  const startGame=(mode,world,level)=>{
+    setMd(mode);setGw(world||null);setGl(level||0);
+    setSc(0);setGs(0);setGb(0);setQi(0);setSel(null);setFb(false);setLv(3);setTl(15);
+    if(mode==='adventure')setQs(getQs(world,level,6));
+    else if(mode==='chrono')setQs(getMix(10));
+    else if(mode==='survival')setQs(getMix(20));
+    else if(mode==='daily')setQs(getMix(8));
+    setPg('play');
+  };
+
+  const startDuel=()=>{
+    setMd('duel');setDpl(1);setDs1(0);setDs2(0);
+    const q1=getMix(6),q2=getMix(6);
+    setQs(q1);setDq2(q2);
+    setSc(0);setGs(0);setGb(0);setQi(0);setSel(null);setFb(false);
+    setPg('play');
+  };
+
+  const handleAns=(i)=>{
+    if(fb)return;setSel(i);setFb(true);
+    const q=qs[qi];const ok=i===q.answer;
+    if(ok){setSc(s=>s+1);setGs(s=>{const ns=s+1;if(ns>gb)setGb(ns);return ns;});}
+    else{setGs(0);if(md==='survival')setLv(l=>l-1);}
+  };
+
+  const nextQ=()=>{
+    if(md==='survival'&&lv<=0&&sel!==_optionalChain([qs, 'access', _2 => _2[qi], 'optionalAccess', _3 => _3.answer])){finish(sc,sc+qi-(sc),gb);return;}
+    if(md==='survival'&&!fb)return;
+    if(md==='survival'&&lv<=0){finish(sc,qi+1,gb);return;}
+    if(md==='duel'&&qi>=5&&dpl===1){
+      setDs1(sc+(sel===_optionalChain([qs, 'access', _4 => _4[qi], 'optionalAccess', _5 => _5.answer])?0:0));
+      setDs1(sc);setDpl(2);setQs(dq2);setQi(0);setSc(0);setGs(0);setSel(null);setFb(false);setPg('duel_switch');return;
+    }
+    if(md==='duel'&&qi>=5&&dpl===2){
+      setDs2(sc);
+      setP(prev=>{const np={...prev};np.gp+=1;const add=tryTr(np,'duel',0,0,0);if(add.length>0){np.tr=[...np.tr,...add];const t=TRO.find(x=>x.id===add[0]);if(t)setNwT(t);setTimeout(()=>setNwT(null),3500);}return np;});
+      setPg('duel_results');return;
+    }
+    if(qi+1>=qs.length){
+      if(md==='survival'){
+        const moreQs=getMix(10);setQs(prev=>[...prev,...moreQs]);
+      } else {finish(sc,qs.length,gb);return;}
+    }
+    setQi(i=>i+1);setSel(null);setFb(false);
+    if(md==='chrono')setTl(15);
+  };
+
+  _react.useEffect.call(void 0, ()=>{
+    if(md==='survival'&&fb&&lv<=0){
+      const timer=setTimeout(()=>finish(sc,qi+1,gb),1500);
+      return()=>clearTimeout(timer);
+    }
+  },[fb,lv,md]);
+
+  const doSave=()=>{const c=btoa(unescape(encodeURIComponent(JSON.stringify({...p,v:3}))));setSCode(c);setShowS(true);setCpd(false);};
+  const doLoad=()=>{try{const d=JSON.parse(decodeURIComponent(escape(atob(lCode.trim()))));if(d.n){setP(d);setLErr('');setShowL(false);setPg('home');}else setLErr('Code invalide');}catch (e2){setLErr('Code invalide');}};
+  const doCopy=async()=>{try{await navigator.clipboard.writeText(sCode);setCpd(true);}catch (e3){try{const t=document.createElement('textarea');t.value=sCode;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);setCpd(true);}catch (e4){}}};
+  const goHome=()=>{setPg('home');setTab('home');};
+
+  // ===== RENDER =====
+  const Btn=({children,cls,onClick,disabled})=>(
+    _react2.default.createElement('button', { onClick: onClick, disabled: disabled, className: `${cls} rounded-2xl font-bold transition-all active:scale-95 disabled:opacity-40`,}, children)
+  );
+
+  return(
+    _react2.default.createElement('div', { className: "min-h-screen bg-gray-950 text-white flex flex-col"    , style: {fontFamily:"'Segoe UI',system-ui,sans-serif"},}
+      /* HEADER */
+      , pg!=='welcome'&&(
+        _react2.default.createElement('div', { className: "bg-gray-900 border-b border-gray-800 px-3 py-2 flex items-center justify-between sticky top-0 z-40"          ,}
+          , _react2.default.createElement('div', { className: "flex items-center gap-2"  ,}
+            , !['home','trophies','scores'].includes(pg)&&(
+              _react2.default.createElement('button', { onClick: ()=>{if(pg==='play'||pg==='results')goHome();else if(pg==='levels')setPg('worlds');else if(pg==='worlds'){setPg('home');setTab('home');}else goHome();}, className: "p-2 rounded-xl bg-gray-800 text-gray-300 active:scale-95"    ,}, "←")
+            )
+            , _react2.default.createElement('span', { className: "text-lg font-bold" ,}, "🌟 MétierQuest" )
+          )
+          , _react2.default.createElement('div', { className: "flex gap-1.5 items-center"  ,}
+            , _react2.default.createElement('span', { className: "text-yellow-400 text-sm font-bold"  ,}, "⭐", p.st)
+            , _react2.default.createElement('button', { onClick: doSave, className: "p-2 rounded-xl bg-indigo-600 text-white text-xs font-bold active:scale-95"      ,}, "💾")
+            , _react2.default.createElement('button', { onClick: ()=>{setShowL(true);setLErr('');setLCode('');}, className: "p-2 rounded-xl bg-violet-600 text-white text-xs font-bold active:scale-95"      ,}, "📂")
+          )
+        )
+      )
+
+      , _react2.default.createElement('div', { className: "flex-1 overflow-auto pb-24"  ,}
+        /* WELCOME */
+        , pg==='welcome'&&(
+          _react2.default.createElement('div', { className: "flex items-center justify-center min-h-screen p-6"    ,}
+            , _react2.default.createElement('div', { className: "bg-gray-900 rounded-3xl p-8 max-w-sm w-full text-center border border-gray-800"       ,}
+              , _react2.default.createElement('div', { className: "text-6xl mb-4" ,}, "🌟")
+              , _react2.default.createElement('h1', { className: "text-3xl font-black mb-2"  ,}, "MétierQuest")
+              , _react2.default.createElement('p', { className: "text-gray-400 mb-6" ,}, "ESAT • Restauration & Espaces verts"     )
+              , _react2.default.createElement('p', { className: "text-xl font-bold mb-3"  ,}, "Ton prénom :"  )
+              , _react2.default.createElement('input', { value: p.n, onChange: e=>setP({...p,n:e.target.value}), placeholder: "Écris ici..." , className: "w-full text-xl p-4 rounded-xl bg-gray-800 border-2 border-gray-700 text-white text-center mb-4 focus:border-indigo-500 focus:outline-none"           ,})
+              , p.n&&_react2.default.createElement(Btn, { cls: "w-full py-4 text-xl bg-gradient-to-r from-indigo-500 to-purple-600 text-white"      , onClick: ()=>{setPg('home');setTab('home');},}, "C'est parti ! 🚀"   )
+              , _react2.default.createElement('button', { onClick: ()=>{setShowL(true);setLErr('');setLCode('');}, className: "mt-3 text-violet-400 text-sm underline"   ,}, "J'ai un code de sauvegarde"    )
+            )
+          )
+        )
+
+        /* HOME */
+        , pg==='home'&&(
+          _react2.default.createElement('div', { className: "p-4 max-w-lg mx-auto space-y-4"   ,}
+            /* Profile */
+            , _react2.default.createElement('div', { className: "bg-gradient-to-r from-indigo-600 to-purple-700 rounded-2xl p-4"    ,}
+              , _react2.default.createElement('div', { className: "flex items-center justify-between mb-3"   ,}
+                , _react2.default.createElement('div', null
+                  , _react2.default.createElement('p', { className: "text-2xl font-black" ,}, p.n)
+                  , _react2.default.createElement('p', { className: "text-indigo-200 text-sm" ,}, lvl.e, " Niveau "  , lvl.i+1, " • "  , lvl.n)
+                )
+                , _react2.default.createElement('div', { className: "text-right text-sm" ,}
+                  , _react2.default.createElement('p', { className: "text-yellow-300 font-bold" ,}, "⭐ " , p.st)
+                  , _react2.default.createElement('p', { className: "text-orange-300 font-bold" ,}, "🔥 " , p.bsk, " max" )
+                  , _react2.default.createElement('p', { className: "text-indigo-200",}, "🏆 " , p.tr.length)
+                )
+              )
+              , _react2.default.createElement('div', { className: "bg-black bg-opacity-20 rounded-full h-3 overflow-hidden"    ,}
+                , _react2.default.createElement('div', { className: "bg-yellow-400 h-3 rounded-full transition-all"   , style: {width:`${nxt?Math.min(((p.xp-lvl.m)/(nxt-lvl.m))*100,100):100}%`},})
+              )
+              , _react2.default.createElement('p', { className: "text-indigo-200 text-xs mt-1"  ,}, p.xp, " XP "  , nxt?`/ ${nxt} XP`:'')
+            )
+
+            /* Daily */
+            , _react2.default.createElement(Btn, { cls: `w-full p-4 text-left ${dailyDone?'bg-gray-800 border border-gray-700':'bg-gradient-to-r from-yellow-500 to-orange-500'}`, onClick: ()=>!dailyDone&&startGame('daily'), disabled: dailyDone,}
+              , _react2.default.createElement('div', { className: "flex items-center justify-between"  ,}
+                , _react2.default.createElement('div', null
+                  , _react2.default.createElement('p', { className: "text-lg font-bold" ,}, "🎯 DÉFI DU JOUR"   )
+                  , _react2.default.createElement('p', { className: "text-sm opacity-80" ,}, dailyDone?'✅ Terminé !':'8 questions • Mélange de tout')
+                )
+                , !dailyDone&&_react2.default.createElement('span', { className: "text-2xl",}, "▶️")
+              )
+            )
+
+            /* Game Modes */
+            , _react2.default.createElement('div', null
+              , _react2.default.createElement('p', { className: "text-gray-400 text-sm font-bold mb-2"   ,}, "🎮 MODES DE JEU"   )
+              , _react2.default.createElement('div', { className: "grid grid-cols-2 gap-3"  ,}
+                , _react2.default.createElement(Btn, { cls: "bg-blue-600 p-4 text-center"  , onClick: ()=>{setPg('worlds');setTab('worlds');},}
+                  , _react2.default.createElement('div', { className: "text-3xl mb-1" ,}, "🗺️"), _react2.default.createElement('div', { className: "font-bold",}, "Aventure"), _react2.default.createElement('div', { className: "text-xs opacity-70" ,}, "Explore les mondes"  )
+                )
+                , _react2.default.createElement(Btn, { cls: "bg-red-600 p-4 text-center"  , onClick: ()=>startGame('chrono'),}
+                  , _react2.default.createElement('div', { className: "text-3xl mb-1" ,}, "⏱️"), _react2.default.createElement('div', { className: "font-bold",}, "Chrono"), _react2.default.createElement('div', { className: "text-xs opacity-70" ,}, "15 sec par question"   )
+                )
+                , _react2.default.createElement(Btn, { cls: "bg-green-600 p-4 text-center"  , onClick: ()=>startGame('survival'),}
+                  , _react2.default.createElement('div', { className: "text-3xl mb-1" ,}, "💚"), _react2.default.createElement('div', { className: "font-bold",}, "Survie"), _react2.default.createElement('div', { className: "text-xs opacity-70" ,}, "3 vies max"  )
+                )
+                , _react2.default.createElement(Btn, { cls: "bg-purple-600 p-4 text-center"  , onClick: ()=>setPg('duel_setup'),}
+                  , _react2.default.createElement('div', { className: "text-3xl mb-1" ,}, "⚔️"), _react2.default.createElement('div', { className: "font-bold",}, "Duel"), _react2.default.createElement('div', { className: "text-xs opacity-70" ,}, "2 joueurs" )
+                )
+              )
+            )
+
+            /* Stats */
+            , _react2.default.createElement('div', { className: "grid grid-cols-3 gap-2"  ,}
+              , _react2.default.createElement('div', { className: "bg-gray-800 rounded-xl p-3 text-center"   ,}, _react2.default.createElement('p', { className: "text-2xl font-black" ,}, p.gp), _react2.default.createElement('p', { className: "text-xs text-gray-400" ,}, "Parties"))
+              , _react2.default.createElement('div', { className: "bg-gray-800 rounded-xl p-3 text-center"   ,}, _react2.default.createElement('p', { className: "text-2xl font-black" ,}, p.tc), _react2.default.createElement('p', { className: "text-xs text-gray-400" ,}, "Bonnes rép." ))
+              , _react2.default.createElement('div', { className: "bg-gray-800 rounded-xl p-3 text-center"   ,}, _react2.default.createElement('p', { className: "text-2xl font-black" ,}, p.sb), _react2.default.createElement('p', { className: "text-xs text-gray-400" ,}, "Record survie" ))
+            )
+
+            /* Recent Trophies */
+            , p.tr.length>0&&(
+              _react2.default.createElement('div', null
+                , _react2.default.createElement('p', { className: "text-gray-400 text-sm font-bold mb-2"   ,}, "🎖️ DERNIERS TROPHÉES"  )
+                , _react2.default.createElement('div', { className: "flex gap-2 overflow-x-auto pb-2"   ,}
+                  , p.tr.slice(-5).reverse().map((tid,i)=>{const t=TRO.find(x=>x.id===tid);return t?(
+                    _react2.default.createElement('div', { key: i, className: "bg-gray-800 rounded-xl p-3 text-center min-w-20 flex-shrink-0"     ,}
+                      , _react2.default.createElement('div', { className: "text-3xl",}, t.e)
+                      , _react2.default.createElement('div', { className: "text-xs text-gray-300 mt-1"  ,}, t.n)
+                    )
+                  ):null;})
+                )
+              )
+            )
+          )
+        )
+
+        /* WORLDS */
+        , pg==='worlds'&&(
+          _react2.default.createElement('div', { className: "p-4 max-w-lg mx-auto"  ,}
+            , _react2.default.createElement('h2', { className: "text-2xl font-black text-center mb-4"   ,}, "🗺️ Les Mondes"  )
+            , _react2.default.createElement('div', { className: "space-y-3",}
+              , WLD.map(w=>{const c=wCol[w.k];const prog=p.wp[w.k];const done=prog.filter(s=>s>0).length;const stars=prog.reduce((a,b)=>a+b,0);return(
+                _react2.default.createElement(Btn, { key: w.k, cls: `w-full p-5 text-left bg-gradient-to-r ${c.gr} border-0`, onClick: ()=>{setGw(w.k);setPg('levels');},}
+                  , _react2.default.createElement('div', { className: "flex items-center justify-between"  ,}
+                    , _react2.default.createElement('div', null
+                      , _react2.default.createElement('p', { className: "text-3xl mb-1" ,}, w.e)
+                      , _react2.default.createElement('p', { className: "text-xl font-black" ,}, w.n)
+                      , _react2.default.createElement('p', { className: "text-sm opacity-80" ,}, w.d)
+                    )
+                    , _react2.default.createElement('div', { className: "text-right",}
+                      , _react2.default.createElement('p', { className: "text-sm font-bold" ,}, done, "/3 niveaux" )
+                      , _react2.default.createElement('p', { className: "text-yellow-300 text-sm" ,}, '⭐'.repeat(stars), '☆'.repeat(9-stars))
+                    )
+                  )
+                )
+              );})
+            )
+          )
+        )
+
+        /* LEVELS */
+        , pg==='levels'&&gw&&(()=>{const w=WLD.find(x=>x.k===gw);const c=wCol[gw];const prog=p.wp[gw];return(
+          _react2.default.createElement('div', { className: "p-4 max-w-lg mx-auto"  ,}
+            , _react2.default.createElement('div', { className: "text-center mb-4" ,}
+              , _react2.default.createElement('div', { className: "text-5xl mb-2" ,}, w.e)
+              , _react2.default.createElement('h2', { className: "text-2xl font-black" ,}, w.n)
+            )
+            , _react2.default.createElement('div', { className: "space-y-3",}
+              , w.l.map((ln,i)=>{const unlocked=i===0||prog[i-1]>0;const stars=prog[i];return(
+                _react2.default.createElement(Btn, { key: i, cls: `w-full p-5 text-left ${unlocked?'bg-gray-800 border border-gray-700':'bg-gray-900 opacity-50 border border-gray-800'}`, onClick: ()=>unlocked&&startGame('adventure',gw,i), disabled: !unlocked,}
+                  , _react2.default.createElement('div', { className: "flex items-center justify-between"  ,}
+                    , _react2.default.createElement('div', { className: "flex items-center gap-3"  ,}
+                      , _react2.default.createElement('div', { className: `w-12 h-12 rounded-xl ${unlocked?(stars>0?c.bg:'bg-gray-700'):'bg-gray-800'} flex items-center justify-center text-xl font-black`,}
+                        , unlocked?(stars>0?'✓':i+1):'🔒'
+                      )
+                      , _react2.default.createElement('div', null
+                        , _react2.default.createElement('p', { className: "font-bold text-lg" ,}, ln)
+                        , _react2.default.createElement('p', { className: "text-gray-400 text-sm" ,}, "6 questions" )
+                      )
+                    )
+                    , _react2.default.createElement('div', { className: "text-yellow-400 text-xl" ,}
+                      , Array.from({length:3},(_, j)=>j<stars?'⭐':'☆').join('')
+                    )
+                  )
+                )
+              );})
+            )
+          )
+        );})()
+
+        /* PLAY */
+        , pg==='play'&&qs.length>0&&qi<qs.length&&(()=>{const q=qs[qi];const isOk=sel===q.answer;return(
+          _react2.default.createElement('div', { className: "p-4 max-w-lg mx-auto"  ,}
+            /* Top bar */
+            , _react2.default.createElement('div', { className: "flex items-center justify-between mb-3"   ,}
+              , _react2.default.createElement('div', { className: "flex items-center gap-2"  ,}
+                , md==='survival'&&_react2.default.createElement('div', { className: "flex gap-1" ,}, Array.from({length:3},(_,i)=>_react2.default.createElement('span', { key: i, className: `text-2xl ${i<lv?'':'opacity-20'}`,}, "💚")))
+                , md==='chrono'&&_react2.default.createElement('div', { className: `text-xl font-black ${tl<=5?'text-red-400':'text-yellow-400'}`,}, "⏱️ " , tl, "s")
+                , md==='duel'&&_react2.default.createElement('div', { className: "text-sm font-bold text-purple-400"  ,}, "⚔️ Tour de "   , dpl===1?dn1:dn2)
+              )
+              , _react2.default.createElement('div', { className: "flex items-center gap-3"  ,}
+                , gs>0&&_react2.default.createElement('span', { className: "text-orange-400 font-bold text-sm"  ,}, "🔥×", gs)
+                , _react2.default.createElement('span', { className: "text-yellow-400 font-bold" ,}, "⭐", sc*5)
+              )
+            )
+
+            /* Progress */
+            , _react2.default.createElement('div', { className: "flex gap-1 mb-1"  ,}
+              , qs.slice(0,md==='survival'?qi+1:qs.length).map((_,i)=>(
+                _react2.default.createElement('div', { key: i, className: `h-2 rounded-full flex-1 transition-all ${i<qi?'bg-green-500':i===qi?'bg-indigo-500':'bg-gray-700'}`,})
+              ))
+            )
+            , _react2.default.createElement('p', { className: "text-gray-500 text-xs text-center mb-3"   ,}, "Question " , qi+1, md!=='survival'?` / ${qs.length}`:'')
+
+            /* Question */
+            , _react2.default.createElement('div', { className: "bg-gray-800 rounded-2xl p-6 mb-4 border border-gray-700"     ,}
+              , _react2.default.createElement('p', { className: "text-2xl font-bold text-center whitespace-pre-line leading-relaxed"    ,}, q.text)
+            )
+
+            /* Options */
+            , _react2.default.createElement('div', { className: "grid grid-cols-1 gap-3 mb-4"   ,}
+              , q.options.map((o,i)=>{
+                let cls='bg-gray-800 border-2 border-gray-700 hover:border-gray-500 text-white';
+                if(fb){
+                  if(i===q.answer)cls='bg-green-900 border-2 border-green-500 text-green-300';
+                  else if(i===sel)cls='bg-red-900 border-2 border-red-500 text-red-300';
+                  else cls='bg-gray-900 border-2 border-gray-800 text-gray-600';
+                }
+                return(
+                  _react2.default.createElement('button', { key: i, onClick: ()=>handleAns(i), disabled: fb, className: `${cls} rounded-xl p-4 text-xl font-semibold transition-all active:scale-95 whitespace-pre-line`,}
+                    , fb&&i===q.answer&&'✅ ', fb&&i===sel&&i!==q.answer&&'❌ ', o
+                  )
+                );
+              })
+            )
+
+            , fb&&(
+              _react2.default.createElement('div', { className: "text-center",}
+                , _react2.default.createElement('p', { className: `text-2xl font-bold mb-3 ${isOk?'text-green-400':'text-red-400'}`,}
+                  , isOk?'🎉 Bravo !':`💪 C'était : ${q.options[q.answer]}`
+                )
+                , md==='survival'&&lv<=0&&!isOk?
+                  _react2.default.createElement('p', { className: "text-red-400 text-xl font-bold"  ,}, "💔 Plus de vies !"    )
+                :
+                  _react2.default.createElement(Btn, { cls: "px-10 py-4 text-xl bg-indigo-600 text-white"    , onClick: nextQ,}
+                    , md==='survival'?'Suivant ➡️':qi+1<qs.length?'Suivant ➡️':'Résultat 🏆'
+                  )
+                
+              )
+            )
+          )
+        );})()
+
+        /* RESULTS */
+        , pg==='results'&&res&&(
+          _react2.default.createElement('div', { className: "p-4 max-w-lg mx-auto text-center"   ,}
+            , _react2.default.createElement(_framermotion.motion.div, { initial: {scale:0.5,opacity:0}, animate: {scale:1,opacity:1}, className: "bg-gray-900 rounded-3xl p-8 border border-gray-800 mt-4"     ,}
+              , _react2.default.createElement('div', { className: "text-7xl mb-4" ,}, res.pf?'🏆':res.sc>=res.tot*0.5?'👍':'💪')
+              , _react2.default.createElement('h2', { className: "text-3xl font-black mb-1"  ,}, res.pf?'PARFAIT !':res.sc>=res.tot*0.5?'Bien joué !':'Continue !')
+              , _react2.default.createElement('p', { className: "text-gray-400 mb-4" ,}, md==='adventure'&&gw?_optionalChain([WLD, 'access', _6 => _6.find, 'call', _7 => _7(w=>w.k===gw), 'optionalAccess', _8 => _8.e])+' ':'', md==='daily'?'Défi du jour':md==='chrono'?'Mode Chrono':md==='survival'?'Mode Survie':'Aventure')
+              , _react2.default.createElement('div', { className: "text-6xl font-black mb-3"  ,}, res.sc, " / "  , res.tot)
+              , _react2.default.createElement('div', { className: "flex justify-center gap-1 mb-4"   ,}
+                , Array.from({length:res.tot}).map((_,i)=>_react2.default.createElement('span', { key: i, className: "text-2xl",}, i<res.sc?'⭐':'☆'))
+              )
+              , _react2.default.createElement('div', { className: "flex justify-center gap-4 mb-6 text-lg"    ,}
+                , _react2.default.createElement('span', { className: "text-yellow-400 font-bold" ,}, "+", res.stE, " ⭐" )
+                , _react2.default.createElement('span', { className: "text-indigo-400 font-bold" ,}, "+", res.xpE, " XP" )
+              )
+              , _react2.default.createElement('div', { className: "space-y-3",}
+                , _react2.default.createElement(Btn, { cls: "w-full py-4 text-lg bg-gray-800 text-white"    , onClick: ()=>{if(md==='adventure'&&gw!=null)startGame('adventure',gw,gl);else if(md==='daily')startGame('daily');else if(md==='chrono')startGame('chrono');else if(md==='survival')startGame('survival');},}, "🔄 Recommencer" )
+                , _react2.default.createElement(Btn, { cls: "w-full py-4 text-lg bg-indigo-600 text-white"    , onClick: goHome,}, "🏠 Accueil" )
+              )
+            )
+          )
+        )
+
+        /* DUEL SETUP */
+        , pg==='duel_setup'&&(
+          _react2.default.createElement('div', { className: "p-4 max-w-lg mx-auto text-center"   ,}
+            , _react2.default.createElement('div', { className: "bg-gray-900 rounded-3xl p-8 border border-gray-800 mt-8"     ,}
+              , _react2.default.createElement('div', { className: "text-5xl mb-3" ,}, "⚔️")
+              , _react2.default.createElement('h2', { className: "text-2xl font-black mb-1"  ,}, "Mode Duel" )
+              , _react2.default.createElement('p', { className: "text-gray-400 mb-6" ,}, "2 joueurs, 1 téléphone !"    )
+              , _react2.default.createElement('div', { className: "space-y-4 mb-6" ,}
+                , _react2.default.createElement('div', null
+                  , _react2.default.createElement('p', { className: "text-lg font-bold text-blue-400 mb-1"   ,}, "Joueur 1" )
+                  , _react2.default.createElement('input', { value: dn1, onChange: e=>setDn1(e.target.value), placeholder: "Prénom...", className: "w-full text-xl p-3 rounded-xl bg-gray-800 border-2 border-blue-500 text-white text-center focus:outline-none"         ,})
+                )
+                , _react2.default.createElement('div', { className: "text-3xl font-black text-gray-600"  ,}, "VS")
+                , _react2.default.createElement('div', null
+                  , _react2.default.createElement('p', { className: "text-lg font-bold text-red-400 mb-1"   ,}, "Joueur 2" )
+                  , _react2.default.createElement('input', { value: dn2, onChange: e=>setDn2(e.target.value), placeholder: "Prénom...", className: "w-full text-xl p-3 rounded-xl bg-gray-800 border-2 border-red-500 text-white text-center focus:outline-none"         ,})
+                )
+              )
+              , dn1&&dn2&&_react2.default.createElement(Btn, { cls: "w-full py-4 text-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white"      , onClick: startDuel,}, "🔥 C'EST PARTI !"   )
+            )
+          )
+        )
+
+        /* DUEL SWITCH */
+        , pg==='duel_switch'&&(
+          _react2.default.createElement('div', { className: "p-4 max-w-lg mx-auto text-center"   ,}
+            , _react2.default.createElement('div', { className: "bg-gray-900 rounded-3xl p-8 border border-gray-800 mt-12"     ,}
+              , _react2.default.createElement('div', { className: "text-5xl mb-3" ,}, "🔄")
+              , _react2.default.createElement('h2', { className: "text-2xl font-black mb-2"  ,}, "Tour de "  , dn2, " !" )
+              , _react2.default.createElement('p', { className: "text-gray-400 mb-2" ,}, dn1, " a fini avec "    , ds1, "/6")
+              , _react2.default.createElement('p', { className: "text-lg text-gray-300 mb-6"  ,}, "Passe le téléphone à "    , dn2)
+              , _react2.default.createElement(Btn, { cls: "w-full py-4 text-xl bg-red-600 text-white"    , onClick: ()=>{setQi(0);setSc(0);setGs(0);setSel(null);setFb(false);setPg('play');},}, "C'est parti "  , dn2, " ! 🚀"  )
+            )
+          )
+        )
+
+        /* DUEL RESULTS */
+        , pg==='duel_results'&&(
+          _react2.default.createElement('div', { className: "p-4 max-w-lg mx-auto text-center"   ,}
+            , _react2.default.createElement(_framermotion.motion.div, { initial: {scale:0.5,opacity:0}, animate: {scale:1,opacity:1}, className: "bg-gray-900 rounded-3xl p-8 border border-gray-800 mt-4"     ,}
+              , _react2.default.createElement('div', { className: "text-5xl mb-3" ,}, "⚔️")
+              , _react2.default.createElement('h2', { className: "text-3xl font-black mb-6"  ,}, ds1>ds2?`${dn1} gagne !`:ds2>ds1?`${dn2} gagne !`:'Égalité !')
+              , _react2.default.createElement('div', { className: "flex justify-center items-center gap-4 mb-6"    ,}
+                , _react2.default.createElement('div', { className: `rounded-2xl p-4 ${ds1>=ds2?'bg-yellow-900 border-2 border-yellow-500':'bg-gray-800 border border-gray-700'} flex-1`,}
+                  , _react2.default.createElement('p', { className: "text-blue-400 font-bold mb-1"  ,}, dn1)
+                  , _react2.default.createElement('p', { className: "text-4xl font-black" ,}, ds1, "/6")
+                  , ds1>ds2&&_react2.default.createElement('p', { className: "text-yellow-400 mt-1" ,}, "👑")
+                )
+                , _react2.default.createElement('span', { className: "text-2xl text-gray-600 font-black"  ,}, "VS")
+                , _react2.default.createElement('div', { className: `rounded-2xl p-4 ${ds2>=ds1?'bg-yellow-900 border-2 border-yellow-500':'bg-gray-800 border border-gray-700'} flex-1`,}
+                  , _react2.default.createElement('p', { className: "text-red-400 font-bold mb-1"  ,}, dn2)
+                  , _react2.default.createElement('p', { className: "text-4xl font-black" ,}, ds2, "/6")
+                  , ds2>ds1&&_react2.default.createElement('p', { className: "text-yellow-400 mt-1" ,}, "👑")
+                )
+              )
+              , _react2.default.createElement('div', { className: "space-y-3",}
+                , _react2.default.createElement(Btn, { cls: "w-full py-4 text-lg bg-purple-600 text-white"    , onClick: ()=>setPg('duel_setup'),}, "🔄 Rejouer" )
+                , _react2.default.createElement(Btn, { cls: "w-full py-4 text-lg bg-gray-800 text-white"    , onClick: goHome,}, "🏠 Accueil" )
+              )
+            )
+          )
+        )
+
+        /* TROPHIES */
+        , pg==='trophies'&&(
+          _react2.default.createElement('div', { className: "p-4 max-w-lg mx-auto"  ,}
+            , _react2.default.createElement('h2', { className: "text-2xl font-black text-center mb-4"   ,}, "🎖️ Mes Trophées "   , _react2.default.createElement('span', { className: "text-indigo-400",}, p.tr.length, "/", TRO.length))
+            , _react2.default.createElement('div', { className: "grid grid-cols-3 gap-3"  ,}
+              , TRO.map(t=>{const has=p.tr.includes(t.id);return(
+                _react2.default.createElement('div', { key: t.id, className: `rounded-xl p-3 text-center ${has?'bg-gray-800 border border-yellow-600':'bg-gray-900 border border-gray-800 opacity-40'}`,}
+                  , _react2.default.createElement('div', { className: "text-3xl mb-1" ,}, has?t.e:'🔒')
+                  , _react2.default.createElement('p', { className: "text-xs font-bold" ,}, t.n)
+                  , _react2.default.createElement('p', { className: "text-xs text-gray-500 mt-0.5"  ,}, t.d)
+                )
+              );})
+            )
+          )
+        )
+
+        /* SCORES */
+        , pg==='scores'&&(
+          _react2.default.createElement('div', { className: "p-4 max-w-lg mx-auto"  ,}
+            , _react2.default.createElement('h2', { className: "text-2xl font-black text-center mb-4"   ,}, "🏆 Mes Stats"  )
+            , _react2.default.createElement('div', { className: "bg-gray-900 rounded-2xl p-5 border border-gray-800 space-y-4"     ,}
+              , _react2.default.createElement('div', { className: "flex justify-between border-b border-gray-800 pb-3"    ,}
+                , _react2.default.createElement('span', { className: "text-gray-400",}, "Niveau")
+                , _react2.default.createElement('span', { className: "font-bold",}, lvl.e, " " , lvl.n, " (Niv." , lvl.i+1, ")")
+              )
+              , _react2.default.createElement('div', { className: "flex justify-between border-b border-gray-800 pb-3"    ,}
+                , _react2.default.createElement('span', { className: "text-gray-400",}, "XP Total" )
+                , _react2.default.createElement('span', { className: "font-bold text-indigo-400" ,}, p.xp, " XP" )
+              )
+              , _react2.default.createElement('div', { className: "flex justify-between border-b border-gray-800 pb-3"    ,}
+                , _react2.default.createElement('span', { className: "text-gray-400",}, "Étoiles")
+                , _react2.default.createElement('span', { className: "font-bold text-yellow-400" ,}, "⭐ " , p.st)
+              )
+              , _react2.default.createElement('div', { className: "flex justify-between border-b border-gray-800 pb-3"    ,}
+                , _react2.default.createElement('span', { className: "text-gray-400",}, "Parties jouées" )
+                , _react2.default.createElement('span', { className: "font-bold",}, p.gp)
+              )
+              , _react2.default.createElement('div', { className: "flex justify-between border-b border-gray-800 pb-3"    ,}
+                , _react2.default.createElement('span', { className: "text-gray-400",}, "Bonnes réponses" )
+                , _react2.default.createElement('span', { className: "font-bold text-green-400" ,}, p.tc)
+              )
+              , _react2.default.createElement('div', { className: "flex justify-between border-b border-gray-800 pb-3"    ,}
+                , _react2.default.createElement('span', { className: "text-gray-400",}, "Scores parfaits" )
+                , _react2.default.createElement('span', { className: "font-bold text-purple-400" ,}, "💎 " , p.pf)
+              )
+              , _react2.default.createElement('div', { className: "flex justify-between border-b border-gray-800 pb-3"    ,}
+                , _react2.default.createElement('span', { className: "text-gray-400",}, "Meilleure série" )
+                , _react2.default.createElement('span', { className: "font-bold text-orange-400" ,}, "🔥 " , p.bsk)
+              )
+              , _react2.default.createElement('div', { className: "flex justify-between border-b border-gray-800 pb-3"    ,}
+                , _react2.default.createElement('span', { className: "text-gray-400",}, "Record Survie" )
+                , _react2.default.createElement('span', { className: "font-bold text-green-400" ,}, "💚 " , p.sb)
+              )
+              , _react2.default.createElement('div', { className: "flex justify-between" ,}
+                , _react2.default.createElement('span', { className: "text-gray-400",}, "Trophées")
+                , _react2.default.createElement('span', { className: "font-bold text-yellow-400" ,}, "🏆 " , p.tr.length, "/", TRO.length)
+              )
+            )
+          )
+        )
+      )
+
+      /* BOTTOM NAV */
+      , ['home','worlds','trophies','scores'].includes(pg)&&(
+        _react2.default.createElement('div', { className: "fixed bottom-0 left-0 right-0 bg-gray-900 border-t border-gray-800 flex z-40"        ,}
+          , [{k:'home',e:'🏠',l:'Accueil'},{k:'worlds',e:'🗺️',l:'Mondes'},{k:'scores',e:'🏆',l:'Stats'},{k:'trophies',e:'🎖️',l:'Trophées'}].map(t=>(
+            _react2.default.createElement('button', { key: t.k, onClick: ()=>{setTab(t.k);setPg(t.k);}, className: `flex-1 py-3 text-center ${pg===t.k?'text-indigo-400':'text-gray-500'} active:scale-95`,}
+              , _react2.default.createElement('div', { className: "text-xl",}, t.e)
+              , _react2.default.createElement('div', { className: "text-xs font-bold" ,}, t.l)
+            )
+          ))
+        )
+      )
+
+      /* TROPHY POPUP */
+      , _react2.default.createElement(_framermotion.AnimatePresence, null
+        , nwT&&(
+          _react2.default.createElement(_framermotion.motion.div, { initial: {y:100,opacity:0}, animate: {y:0,opacity:1}, exit: {y:-100,opacity:0}, className: "fixed top-16 left-4 right-4 z-50 flex justify-center"      ,}
+            , _react2.default.createElement('div', { className: "bg-gradient-to-r from-yellow-600 to-amber-600 rounded-2xl px-6 py-4 flex items-center gap-3 shadow-2xl max-w-sm"          ,}
+              , _react2.default.createElement('span', { className: "text-4xl",}, nwT.e)
+              , _react2.default.createElement('div', null
+                , _react2.default.createElement('p', { className: "text-xs text-yellow-200 font-bold"  ,}, "🏆 TROPHÉE DÉBLOQUÉ !"   )
+                , _react2.default.createElement('p', { className: "text-lg font-black text-white"  ,}, nwT.n)
+              )
+            )
+          )
+        )
+      )
+
+      /* SAVE MODAL */
+      , showS&&(
+        _react2.default.createElement('div', { className: "fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50"        ,}
+          , _react2.default.createElement('div', { className: "bg-gray-900 rounded-2xl p-6 max-w-sm w-full border border-gray-700"      ,}
+            , _react2.default.createElement('h3', { className: "text-xl font-bold mb-1"  ,}, "💾 Sauvegarder" )
+            , _react2.default.createElement('p', { className: "text-gray-400 text-sm mb-3"  ,}, "Copie ce code et garde-le bien !"      )
+            , _react2.default.createElement('textarea', { readOnly: true, value: sCode, onClick: e=>e.target.select(), className: "w-full h-24 p-3 rounded-xl bg-gray-800 border border-gray-700 text-xs font-mono text-gray-300 mb-3 focus:outline-none"           ,})
+            , _react2.default.createElement('div', { className: "flex gap-2" ,}
+              , _react2.default.createElement(Btn, { cls: `flex-1 py-3 text-sm ${cpd?'bg-green-600':'bg-indigo-600'} text-white flex items-center justify-center gap-1`, onClick: doCopy,}, cpd?'✅ Copié !':'📋 Copier')
+              , _react2.default.createElement(Btn, { cls: "px-5 py-3 bg-gray-800 text-white text-sm"    , onClick: ()=>setShowS(false),}, "Fermer")
+            )
+          )
+        )
+      )
+
+      /* LOAD MODAL */
+      , showL&&(
+        _react2.default.createElement('div', { className: "fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50"        ,}
+          , _react2.default.createElement('div', { className: "bg-gray-900 rounded-2xl p-6 max-w-sm w-full border border-gray-700"      ,}
+            , _react2.default.createElement('h3', { className: "text-xl font-bold mb-1"  ,}, "📂 Charger" )
+            , _react2.default.createElement('p', { className: "text-gray-400 text-sm mb-3"  ,}, "Colle ton code de sauvegarde :"     )
+            , _react2.default.createElement('textarea', { value: lCode, onChange: e=>{setLCode(e.target.value);setLErr('');}, placeholder: "Colle ici..." , className: "w-full h-24 p-3 rounded-xl bg-gray-800 border border-gray-700 text-xs font-mono text-gray-300 mb-3 focus:outline-none"           ,})
+            , lErr&&_react2.default.createElement('p', { className: "text-red-400 text-sm mb-2 font-bold"   ,}, "❌ " , lErr)
+            , _react2.default.createElement('div', { className: "flex gap-2" ,}
+              , _react2.default.createElement(Btn, { cls: "flex-1 py-3 bg-violet-600 text-white text-sm"    , onClick: doLoad, disabled: !lCode.trim(),}, "📂 Charger" )
+              , _react2.default.createElement(Btn, { cls: "px-5 py-3 bg-gray-800 text-white text-sm"    , onClick: ()=>setShowL(false),}, "Fermer")
+            )
+          )
+        )
+      )
+    )
+  );
+} exports.default = MetierQuest;
+</script></head>
+  <body>
+  
+
+<div id="preview-app"></div></body></html>
